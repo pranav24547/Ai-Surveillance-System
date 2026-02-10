@@ -1,0 +1,59 @@
+# ============================================
+# Smart Surveillance System - .gitignore
+# ============================================
+
+# ---------- Sensitive Configuration ----------
+config.yaml
+.env
+.env.*
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+
+# ---------- Model Weights ----------
+*.pt
+*.pth
+*.onnx
+*.tflite
+
+# ---------- Evidence / Data (any depth) ----------
+**/evidence/
+**/videos/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+
+# ---------- IDE / Editor ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# ---------- OS ----------
+Thumbs.db
+Desktop.ini
+.DS_Store
+.DS_Store?
+
+# ---------- Logs ----------
+*.log
+logs/
+
+# ---------- Misc ----------
+*.bak
+*.tmp
