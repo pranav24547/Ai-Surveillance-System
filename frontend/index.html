@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Surveillance System - Dashboard</title>
+    <meta name="description" content="AI-powered weapon detection surveillance system dashboard">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🛡️</div>
+                <div class="logo-text">
+                    <span class="logo-title">SmartSurveillance</span>
+                    <span class="logo-subtitle">AI Security</span>
+                </div>
+            </div>
+            
+            <nav class="nav">
+                <a href="#" class="nav-item active" data-view="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-view="live">
+                    <span class="nav-icon">📹</span>
+                    <span>Live Feed</span>
+                </a>
+                <a href="#" class="nav-item" data-view="alerts">
+                    <span class="nav-icon">🚨</span>
+                    <span>Alerts</span>
+                    <span class="nav-badge" id="alertBadge">0</span>
+                </a>
+                <a href="#" class="nav-item" data-view="evidence">
+                    <span class="nav-icon">📁</span>
+                    <span>Evidence</span>
+                </a>
+                <a href="#" class="nav-item" data-view="settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            
+            <div class="system-status">
+                <div class="status-header">System Status</div>
+                <div class="status-item">
+                    <span class="status-dot" id="connectionDot"></span>
+                    <span id="connectionStatus">Connecting...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Uptime:</span>
+                    <span id="uptime">--:--:--</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">FPS:</span>
+                    <span id="fps">0</span>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 id="viewTitle">Dashboard</h1>
+                    <span class="header-date" id="currentDate"></span>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-secondary" id="refreshBtn">
+                        <span>🔄</span> Refresh
+                    </button>
+                    <button class="btn btn-primary" id="startStreamBtn">
+                        <span>▶️</span> Start Stream
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Dashboard View -->
+            <div class="view active" id="dashboardView">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon warning">🎯</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="totalDetections">0</div>
+                            <div class="stat-label">Total Detections</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon danger">🚨</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="todayAlerts">0</div>
+                            <div class="stat-label">Today's Alerts</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon success">📹</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="activeCameras">1</div>
+                            <div class="stat-label">Active Cameras</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon info">💾</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="storageUsed">0 MB</div>
+                            <div class="stat-label">Storage Used</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick View Section -->
+                <div class="dashboard-grid">
+                    <!-- Live Preview -->
+                    <div class="panel live-preview-panel">
+                        <div class="panel-header">
+                            <h3>📹 Live Preview</h3>
+                            <button class="btn btn-ghost btn-sm" onclick="switchToView('live')">Full Screen</button>
+                        </div>
+                        <div class="panel-content">
+                            <div class="video-container mini">
+                                <img id="dashboardPreview" src="" alt="Live feed preview">
+                                <div class="video-overlay" id="dashboardOverlay">
+                                    <span>Click 'Start Stream' to begin</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Alerts -->
+                    <div class="panel alerts-panel">
+                        <div class="panel-header">
+                            <h3>🚨 Recent Alerts</h3>
+                            <button class="btn btn-ghost btn-sm" onclick="switchToView('alerts')">View All</button>
+                        </div>
+                        <div class="panel-content">
+                            <div class="alerts-list" id="recentAlertsList">
+                                <div class="empty-state">
+                                    <span class="empty-icon">✅</span>
+                                    <span>No recent alerts</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Live Feed View -->
+            <div class="view" id="liveView">
+                <div class="live-feed-container">
+                    <div class="video-wrapper">
+                        <div class="video-container">
+                            <img id="liveStream" src="" alt="Live surveillance feed">
+                            <div class="video-overlay" id="liveOverlay">
+                                <div class="overlay-content">
+                                    <div class="loading-spinner"></div>
+                                    <span>Connecting to camera...</span>
+                                </div>
+                            </div>
+                            <div class="video-info">
+                                <span class="camera-label">📍 Camera 1 - Main Entrance</span>
+                                <span class="live-badge">● LIVE</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detection Panel -->
+                    <div class="detection-sidebar">
+                        <h3>🎯 Live Detections</h3>
+                        <div class="detection-list" id="liveDetections">
+                            <div class="empty-state small">
+                                <span>Monitoring...</span>
+                            </div>
+                        </div>
+                        
+                        <div class="detection-stats">
+                            <h4>Session Stats</h4>
+                            <div class="mini-stat">
+                                <span>Frames Processed:</span>
+                                <span id="framesProcessed">0</span>
+                            </div>
+                            <div class="mini-stat">
+                                <span>Detections:</span>
+                                <span id="sessionDetections">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Alerts View -->
+            <div class="view" id="alertsView">
+                <div class="panel full-width">
+                    <div class="panel-header">
+                        <h3>Alert History</h3>
+                        <div class="filter-group">
+                            <select id="alertFilter" class="select">
+                                <option value="">All Types</option>
+                                <option value="gun">Gun</option>
+                                <option value="knife">Knife</option>
+                                <option value="rifle">Rifle</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="alerts-table-container">
+                            <table class="alerts-table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Type</th>
+                                        <th>Confidence</th>
+                                        <th>Location</th>
+                                        <th>Channels</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="alertsTableBody">
+                                    <tr>
+                                        <td colspan="6" class="empty-cell">No alerts recorded</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Evidence View -->
+            <div class="view" id="evidenceView">
+                <div class="panel full-width">
+                    <div class="panel-header">
+                        <h3>Evidence Gallery</h3>
+                        <div class="filter-group">
+                            <select id="evidenceFilter" class="select">
+                                <option value="">All Types</option>
+                                <option value="gun">Gun</option>
+                                <option value="knife">Knife</option>
+                                <option value="rifle">Rifle</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="evidence-grid" id="evidenceGrid">
+                            <div class="empty-state">
+                                <span class="empty-icon">📁</span>
+                                <span>No evidence collected yet</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Settings View -->
+            <div class="view" id="settingsView">
+                <div class="settings-grid">
+                    <!-- Detection Settings -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>🎯 Detection Settings</h3>
+                        </div>
+                        <div class="panel-content">
+                            <div class="form-group">
+                                <label>Confidence Threshold</label>
+                                <div class="range-group">
+                                    <input type="range" id="confidenceSlider" min="0.1" max="1" step="0.05" value="0.7">
+                                    <span id="confidenceValue">70%</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Target Classes</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox"><input type="checkbox" checked value="gun"> Gun</label>
+                                    <label class="checkbox"><input type="checkbox" checked value="knife"> Knife</label>
+                                    <label class="checkbox"><input type="checkbox" checked value="rifle"> Rifle</label>
+                                    <label class="checkbox"><input type="checkbox" checked value="pistol"> Pistol</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Alert Settings -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>🚨 Alert Settings</h3>
+                        </div>
+                        <div class="panel-content">
+                            <div class="form-group">
+                                <label class="toggle-label">
+                                    <span>Enable Alerts</span>
+                                    <div class="toggle">
+                                        <input type="checkbox" id="alertsEnabled" checked>
+                                        <span class="toggle-slider"></span>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>Cooldown Period (seconds)</label>
+                                <input type="number" id="cooldownInput" value="60" min="10" max="300" class="input">
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-warning" id="testAlertBtn">
+                                    🔔 Send Test Alert
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Save Button -->
+                    <div class="settings-actions">
+                        <button class="btn btn-primary btn-lg" id="saveSettingsBtn">
+                            💾 Save Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Detection Alert Modal -->
+    <div class="modal" id="alertModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content alert-modal">
+            <div class="modal-header danger">
+                <h2>🚨 WEAPON DETECTED</h2>
+            </div>
+            <div class="modal-body">
+                <div class="alert-details">
+                    <div class="alert-image">
+                        <img id="alertImage" src="" alt="Detection">
+                    </div>
+                    <div class="alert-info">
+                        <div class="alert-row">
+                            <span class="label">Weapon Type:</span>
+                            <span class="value" id="alertWeaponType">--</span>
+                        </div>
+                        <div class="alert-row">
+                            <span class="label">Confidence:</span>
+                            <span class="value" id="alertConfidence">--</span>
+                        </div>
+                        <div class="alert-row">
+                            <span class="label">Location:</span>
+                            <span class="value" id="alertLocation">--</span>
+                        </div>
+                        <div class="alert-row">
+                            <span class="label">Time:</span>
+                            <span class="value" id="alertTime">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Dismiss</button>
+                <button class="btn btn-primary" onclick="viewEvidence()">View Evidence</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Evidence Modal -->
+    <div class="modal" id="evidenceModal">
+        <div class="modal-backdrop" onclick="closeEvidenceModal()"></div>
+        <div class="modal-content evidence-modal">
+            <button class="modal-close" onclick="closeEvidenceModal()">✕</button>
+            <img id="evidenceModalImage" src="" alt="Evidence">
+            <div class="evidence-modal-info" id="evidenceModalInfo"></div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
