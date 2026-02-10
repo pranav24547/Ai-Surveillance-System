@@ -1,0 +1,81 @@
+# Smart Surveillance System Configuration
+# ========================================
+# SETUP: Copy this file to config.yaml and fill in your credentials
+#   cp config.example.yaml config.yaml  (Linux/Mac)
+#   copy config.example.yaml config.yaml  (Windows)
+
+detection:
+  model_path: "models/yolov8n.pt"
+  confidence_threshold: 0.40
+  classes:
+    - gun
+    - knife
+    - rifle
+    - pistol
+    - person_detected
+  
+video:
+  # VIDEO SOURCE OPTIONS:
+  # -----------------------
+  # Webcam:      0 (first camera), 1 (second camera), etc.
+  # Video file:  "data/videos/test.mp4" or full path "C:/videos/sample.mp4"
+  # RTSP stream: "rtsp://user:pass@ip:554/stream"
+  # HTTP stream: "http://example.com/stream.mjpg"
+  source: 0  # Default to webcam; change as needed
+  frame_width: 640
+  frame_height: 480
+  fps: 30
+  
+alerts:
+  enabled: true
+  cooldown_seconds: 60
+  
+  sms:
+    enabled: false
+    twilio_account_sid: "YOUR_TWILIO_ACCOUNT_SID"
+    twilio_auth_token: "YOUR_TWILIO_AUTH_TOKEN"
+    from_number: "+1234567890"
+    to_numbers:
+      - "+0987654321"
+    
+  email:
+    enabled: false
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    use_tls: true
+    sender_email: "your-email@gmail.com"
+    sender_password: "your-app-password"  # Use App Password for Gmail
+    recipients:
+      - "security@example.com"
+  
+  # TELEGRAM (FREE & UNLIMITED!) - Recommended
+  # Setup: 1) Message @BotFather on Telegram, 2) Create bot with /newbot
+  #        3) Copy token below, 4) Start chat with your bot
+  #        5) Get chat_id from: https://api.telegram.org/bot<TOKEN>/getUpdates
+  telegram:
+    enabled: false
+    bot_token: "YOUR_TELEGRAM_BOT_TOKEN"
+    chat_ids:
+      - "YOUR_TELEGRAM_CHAT_ID"
+  
+  # WHATSAPP (UltraMsg - 500 free messages)
+  # Setup: 1) Go to https://ultramsg.com and sign up
+  #        2) Create an instance and link your WhatsApp (scan QR code)
+  #        3) Copy Instance ID and Token from dashboard
+  #        4) Phone format: country code + number (e.g., 919876543210 for India)
+  whatsapp:
+    enabled: false
+    instance_id: "YOUR_ULTRAMSG_INSTANCE_ID"
+    token: "YOUR_ULTRAMSG_TOKEN"
+    phone_numbers:
+      - "919876543210"  # country code + number
+    
+storage:
+  evidence_path: "data/evidence"
+  max_evidence_files: 1000
+  save_annotated_frames: true
+
+server:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
